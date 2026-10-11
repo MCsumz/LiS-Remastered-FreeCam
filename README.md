@@ -1,86 +1,53 @@
 # Life is Strange Remastered — Free Camera
 
-A free-camera hotkey mod for **Life is Strange Remastered (PC)**, powered by UE4SS.
-
-Toggle Unreal Engine's native debug camera using your keyboard or Xbox controller, without opening the developer console.
-
-## Features
-
-- **Keyboard support:** Press `1` to toggle the free camera.
-- **Xbox controller support:** Hold **L3 + R3** (both analog sticks pressed) for approximately **1.5 seconds** to toggle the camera.
-- **Two-way toggling:** Enter and exit free-camera mode using either input method.
-- **Controller-aware input handling:** Supports switching between the normal player controller and Unreal's debug camera controller.
-- **Lightweight:** Standalone UE4SS Lua mod; no external hotkey application required.
-
-## Requirements
-
-**Game:** Life is Strange Remastered — Windows PC
-
-**Dependencies:**
-
-- [UE4SS — RE-UE4SS](https://github.com/UE4SS-RE/RE-UE4SS) — A compatible experimental build is recommended.
-- [Life is Strange Remastered UE4SS compatibility patch](https://www.nexusmods.com/lifeisstrangeremastered/mods/54) by WoahItsJeebus.
-
-**Important:** Life is Strange Remastered requires the game-specific `VTableLayout.ini` compatibility patch for the tested setup. UE4SS without the patch may cause startup crashes.
-
-## Installation
-
-**1. Install UE4SS**
-
-Download a compatible experimental UE4SS build from the [UE4SS releases](https://github.com/UE4SS-RE/RE-UE4SS/releases) and follow its installation instructions.
-
-The target game executable directory is:
-
-`Steam\steamapps\common\LIS - Remastered\LIS\Binaries\Win64\`
-
-**2. Install the compatibility patch**
-
-Download the game-specific `VTableLayout.ini` from the Nexus Mods page linked above.
-
-Place the file at:
-
-`LIS\Binaries\Win64\ue4ss\VTableLayout.ini`
-
-**3. Install FreeCamHotkey**
-
-Copy the `FreeCamHotkey` folder from this repository into:
-
-`LIS\Binaries\Win64\ue4ss\Mods\`
-
-The script should be located at:
-
-`LIS\Binaries\Win64\ue4ss\Mods\FreeCamHotkey\Scripts\main.lua`
-
-**4. Enable the mod**
-
-Open:
-
-`LIS\Binaries\Win64\ue4ss\Mods\mods.txt`
-
-Add or enable the following entry:
-
-`FreeCamHotkey : 1`
-
-**5. Launch the game**
-
-Start Life is Strange Remastered through Steam and load into gameplay.
+UE4SS Lua mods for controlling Unreal Engine's debug camera in **Life is Strange Remastered (Windows PC)**. The keyboard and Xbox One wireless controller controls below have been tested in-game.
 
 ## Controls
 
 | Input | Action |
-|---|---|
-| Keyboard `1` | Toggle free camera ON/OFF |
-| Xbox L3 + R3 (hold ~1.5 seconds) | Toggle free camera ON/OFF |
+| --- | --- |
+| Keyboard `1` | Toggle debug camera on or off |
+| Hold Xbox L3 + R3 for about 1.5 seconds | Toggle debug camera on or off |
+| Xbox RT | Move debug camera up |
+| Xbox LT | Move debug camera down |
 
-Release both analog stick buttons between controller activations.
+Release both stick buttons before using the L3 + R3 shortcut again. The game's existing camera controls remain available. Holding L3 + R3 may move the camera vertically before the toggle occurs.
 
-## Compatibility and limitations
+`FreeCamHotkey` handles both toggle shortcuts. `FreeCamVerticalTriggers` handles RT/LT movement independently and only while the debug camera is active. No `Input.ini` trigger mappings or separate PowerShell helper need to run during gameplay.
 
-Developed and tested with Life is Strange Remastered for Windows using an experimental UE4SS build and the game-specific compatibility patch.
+## Requirements
+
+- [UE4SS](https://github.com/UE4SS-RE/RE-UE4SS) installed in the game's `LIS\Binaries\Win64` directory. This setup was tested with a compatible experimental build.
+- The game-specific [`VTableLayout.ini` compatibility patch](https://www.nexusmods.com/lifeisstrangeremastered/mods/54) by WoahItsJeebus, placed at `LIS\Binaries\Win64\ue4ss\VTableLayout.ini`. UE4SS without the patch may crash at startup.
+
+These dependencies are separate projects and are not included in this repository.
+
+## Installation
+
+Close the game, then run the included installer from PowerShell, passing the game's `Win64` directory:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Install_FreeCam.ps1 -Win64 "C:\Program Files (x86)\Steam\steamapps\common\LIS - Remastered\LIS\Binaries\Win64"
+```
+
+The installer copies both mod folders to `Win64\ue4ss\Mods`, enables them in `mods.txt`, and backs up existing scripts and `mods.txt` with timestamps before replacing them. Restart the game afterward.
+
+For a manual install, copy `FreeCamHotkey` and `FreeCamVerticalTriggers` to `Win64\ue4ss\Mods`, then add or enable these entries in `Win64\ue4ss\Mods\mods.txt`:
+
+```text
+FreeCamHotkey : 1
+FreeCamVerticalTriggers : 1
+```
+
+Place the entries above `Keybinds : 1` if that line is present. The Lua scripts should be at `ue4ss\Mods\FreeCamHotkey\Scripts\main.lua` and `ue4ss\Mods\FreeCamVerticalTriggers\Scripts\main.lua`.
+
+## Troubleshooting
+
+Check `Win64\ue4ss\UE4SS.log` for `[LiS FreeCamHotkey v7]` and `[LiS FreeCamVerticalTriggers]`. The trigger mod logs its first detected RT/LT input or an error if its movement loop stops.
+
+To disable trigger movement alone, set `FreeCamVerticalTriggers : 0` in `mods.txt`. To disable the entire package, set both mod entries to `0`.
 
 Compatibility with every game version, controller model, or UE4SS release is not guaranteed.
-
-This mod uses Unreal Engine's native debug-camera functionality. Camera behavior and movement controls are determined by the game engine.
 
 ## Development and credits
 
@@ -88,12 +55,7 @@ This mod uses Unreal Engine's native debug-camera functionality. Camera behavior
 
 Concept, design direction, implementation requirements, integration, and in-game testing by MCsumz. Lua development assisted by **OpenAI Codex**.
 
-**Dependencies and third-party acknowledgements:**
-
-- [UE4SS-RE](https://github.com/UE4SS-RE/RE-UE4SS) — UE4SS framework.
-- **WoahItsJeebus** — Life is Strange Remastered UE4SS compatibility patch.
-
-These dependencies are separate projects and are not bundled with this mod.
+**Dependencies and third-party acknowledgements:** [UE4SS-RE](https://github.com/UE4SS-RE/RE-UE4SS) provides UE4SS; WoahItsJeebus created the Life is Strange Remastered UE4SS compatibility patch.
 
 ## License
 

@@ -39,7 +39,7 @@ FreeCamHotkey : 1
 FreeCamVerticalTriggers : 1
 ```
 
-Place the entries above `Keybinds : 1` if that line is present. The Lua scripts should be at `ue4ss\Mods\FreeCamHotkey\Scripts\main.lua` and `ue4ss\Mods\FreeCamVerticalTriggers\Scripts\main.lua`.
+Place both FreeCam entries after the other mod entries, before the blank lines and built-in keybinds comment above `Keybinds : 1`. The Lua scripts should be at `ue4ss\Mods\FreeCamHotkey\Scripts\main.lua` and `ue4ss\Mods\FreeCamVerticalTriggers\Scripts\main.lua`.
 
 ## Troubleshooting
 

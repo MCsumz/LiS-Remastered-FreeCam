@@ -47,24 +47,29 @@ if (Test-Path -LiteralPath $modsTxt -PathType Leaf) {
     $lines.Add('Keybinds : 1')
 }
 
+# Keep the FreeCam entries together at the end of the regular mod list.
+# Remove any previous entries first so reinstalling also fixes their position.
+for ($i = $lines.Count - 1; $i -ge 0; $i--) {
+    if ($lines[$i] -match '^\s*(?:FreeCamHotkey|FreeCamVerticalTriggers)\s*:') {
+        $lines.RemoveAt($i)
+    }
+}
+
+$insertAt = $lines.Count
+for ($i = 0; $i -lt $lines.Count; $i++) {
+    if ($lines[$i] -match '^\s*;\s*Built-in keybinds\b' -or
+        $lines[$i] -match '^\s*Keybinds\s*:') {
+        $insertAt = $i
+        break
+    }
+}
+# Preserve the blank separator above the built-in keybinds section.
+while ($insertAt -gt 0 -and [string]::IsNullOrWhiteSpace($lines[$insertAt - 1])) {
+    $insertAt--
+}
 foreach ($modName in $modNames) {
-    $found = $false
-    for ($i = 0; $i -lt $lines.Count; $i++) {
-        if ($lines[$i] -match ('^\s*' + [regex]::Escape($modName) + '\s*:')) {
-            $lines[$i] = "$modName : 1"
-            $found = $true
-        }
-    }
-    if (-not $found) {
-        $insertAt = $lines.Count
-        for ($i = 0; $i -lt $lines.Count; $i++) {
-            if ($lines[$i] -match '^\s*Keybinds\s*:') {
-                $insertAt = $i
-                break
-            }
-        }
-        $lines.Insert($insertAt, "$modName : 1")
-    }
+    $lines.Insert($insertAt, "$modName : 1")
+    $insertAt++
 }
 
 [System.IO.File]::WriteAllLines($modsTxt, $lines, (New-Object System.Text.UTF8Encoding($false)))
